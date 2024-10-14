@@ -63,6 +63,12 @@ async function fight1() {
         // Reset player guard and update UI
         Entities.player.guard = 0;
         playerGuardHTML.innerHTML = "guard: " + Entities.player.guard;
+
+        if (Entities.player.health <= 0) {
+            showDeathScreen();  // Show the "You Died" screen
+            break;  // Stop the fight
+        }
+
         let damageModifier = Math.floor(Math.random() * 2);
         console.log(damageModifier)
         if (damageModifier == 0){
@@ -358,4 +364,23 @@ function resetGame() {
     Entities.bugling.health = 25;
     Entities.player.cardPlay = 3;
 
+}
+
+function showDeathScreen() {
+    // Create the death screen container
+    const deathScreen = document.createElement('div');
+    deathScreen.classList.add('youDiedScreen');
+    
+    // Add the "You Died" text
+    const deathText = document.createElement('h1');
+    deathText.innerText = "You Died...";
+    deathScreen.appendChild(deathText);
+    
+    // Append the death screen to the body
+    document.body.appendChild(deathScreen);
+    
+    // Wait for the fade animation before showing the text
+    setTimeout(() => {
+      deathScreen.classList.add('showText');
+    }, 3000); // Delay for 3 seconds to match the fade animation time
 }
