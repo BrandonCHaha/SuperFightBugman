@@ -4,15 +4,28 @@ html, body {
     overflow: hidden;
     height: 100%;
     width: 100%;
+    font-family: "Jacquarda Bastarda 9", serif !important;
+    font-weight: 400;
+    font-style: bold;
+    font-size: 30px;
+    background-image: url('/C:/Users/brand/OneDrive/Documents/GitHub/SuperFightBugman/assetsPH/Background.png') !important; /* Replace with your image path */
+    background-size: cover; /* Adjusts the image to cover the whole background */
+    background-repeat: no-repeat; /* Prevents the image from repeating */
+    background-position: center; /* Centers the image in the background */
+    color: #171219 !important;
 }
+
+
 
 .floorBanner {
     text-align: center;
 }
 
-.enemyContainer {
-    text-align: center;
+.eText {
+    text-align: left;
+    color: #9F838C;
 }
+
 
 .enemyImg {
     float: left;
@@ -31,20 +44,64 @@ html, body {
 }
 
 .deckContainer {
-    border: 4mm ridge rgba(92, 37, 58, 0.6);
+    border: 10px solid #4c3f43;
+    border-radius: 5%;
+    width: auto; /* Let it fit its content */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #f1d2a7;
+    margin-right: 20px; /* Add space between deck and player hand */
+}
+
+#playerHand {
+    background-color: #f1d2a7; /* Visible background for debugging */
+    padding: 20px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    flex-wrap: nowrap;
+    border: solid 10px #4c3f43;
+    border-radius: 15px;
+    height: auto;
+    flex-grow: 1; /* Allow it to grow to fill the remaining space */
+}
+
+#endBtn {
+    margin-top: 15px;  /* Add some space to make it visible */
+    padding: 10px 20px;
+    border: 5px solid #4c3f43;
+    border-radius: 5%;
+    font-size: 30px; /* Adjust button size */
+    background-color: #6F9283;
 }
 
 .deckCard {
-    padding: 10px;
-    padding-bottom: 50px;
-    border: solid 1px #808080;
-    background-color: white;
+    padding: 15px;
+    background-color: #f7e1bf; /* Background color for visibility */
+    border: solid 5px #4c3f43;
+    border-radius: 5%;
+    font-size: 20px; /* Use fixed font size */
+    width: 200px; /* Fixed width */
+    height: 250px; /* Fixed height */
     display: inline-block;
-    border-radius: 10px;
-    font-size: 14pt;
+    margin: 10px;
     text-align: center;
-    color: black;
-    margin: 3px;
-    /* Add responsive widths */
-    width: 15%;  /* Let JavaScript adjust this too */
+    box-sizing: border-box; /* Include padding in width/height */
+    overflow: hidden; /* Prevent overflow of text */
 }
+
+.deckCard p {
+    margin: 0;
+    line-height: 1.2em; /* Adjust line height for better text fitting */
+    white-space: nowrap; /* Prevent text from wrapping */
+    overflow: hidden;
+    text-overflow: ellipsis; /* Cut off long text with "..." */
+}
+
+.handAndInfoContainer {
+    display: flex;  /* Enable flexbox */
+    justify-content: space-between; /* Space between child elements */
+    padding-top: 0px;
+}
+

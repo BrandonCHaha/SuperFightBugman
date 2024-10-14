@@ -1,8 +1,8 @@
 class Deck{
     static cards =[
         {cost: 0, type: 'damage', value: 2, name: 'Quick Strike', cardNum: 1}, 
-        {cost: 1, type: 'damage', value: 6, name: 'Slash', cardNum: 2}, 
-        {cost: 1, type: 'damage', value: 6, name: 'Slash', cardNum: 3}, 
+        {cost: 1, type: 'damage', value: 6, name: 'Flame- thrower', cardNum: 2}, 
+        {cost: 1, type: 'damage', value: 6, name: 'Flame- thrower', cardNum: 3}, 
         {cost: 1, type: 'defense', value: 4, name: 'Defenses up!', cardNum: 4}, 
         {cost: 1, type: 'defense', value: 4, name: 'Defenses up!', cardNum: 5}, 
         {cost: 2, type: 'defense', value: 10, name: 'Daring Escape', cardNum: 6}
@@ -14,7 +14,7 @@ class Deck{
 
 class Entities{
     static player = {health: 30, cardPlay: 3, guard: 0}
-    static bugling = {health: 25, damage: 4, guard: 0}
+    static bugling = {health: 50, damage: 4, guard: 0}
 }
 
 
@@ -22,6 +22,7 @@ CreateBattleUI(1);
 DrawInitialHand();
 resizeGame();
 window.addEventListener('resize', resizeGame);
+window.addEventListener('resize', setCardSize);
 
 
 DisplayCards();
@@ -30,6 +31,7 @@ fight1();
 
 async function fight1() {
     const enemyWarning = document.getElementById("eW");
+    const enemyHealthHTML = document.getElementById("eHP")
     const playerHealthHTML = document.getElementById("pHP");
     const cardPlayHTML = document.getElementById("energyLeft");
     const playerGuardHTML = document.getElementById("pGuard");
@@ -38,31 +40,42 @@ async function fight1() {
         await PlayerTurn();
 
         Entities.player.cardPlay = 3;
-        cardPlayHTML.innerHTML = Entities.player.cardPlay;
-
-        // Display the upcoming attack damage right after the player ends their turn
-        enemyWarning.innerHTML = `Bugling attacks for ${Entities.bugling.damage} damage!`;
-
-        await new Promise(resolve => setTimeout(resolve, 1000));
-
-        enemyWarning.innerHTML = Entities.bugling.damage + 1;
-
-        // Check if the enemy is still alive before applying damage
+        cardPlayHTML.innerHTML = "energy: " + Entities.player.cardPlay;
+        
         if (Entities.bugling.health > 0) {
+
+            enemyWarning.style.fontSize = '30px';
+
+            enemyWarning.innerHTML = `Bugman attacks for ${Entities.bugling.damage} damage!`;
+
+            await new Promise(resolve => setTimeout(resolve, 1000));
+
+            enemyWarning.style.fontSize = '60px';
+
+            enemyWarning.innerHTML = "dw: " + (Entities.bugling.damage + 1);
+
+
             const damageToTake = Math.max(Entities.bugling.damage - Entities.player.guard, 0);
             Entities.player.health -= damageToTake;
-            playerHealthHTML.innerHTML = Entities.player.health;
+            playerHealthHTML.innerHTML = "hp: " + Entities.player.health;
         }
 
         // Reset player guard and update UI
         Entities.player.guard = 0;
-        playerGuardHTML.innerHTML = Entities.player.guard;
-
-        Entities.bugling.damage += 1;
+        playerGuardHTML.innerHTML = "guard: " + Entities.player.guard;
+        let damageModifier = Math.floor(Math.random() * 2);
+        console.log(damageModifier)
+        if (damageModifier == 0){
+            Entities.bugling.damage += 1;
+        } else {
+            Entities.bugling.damage += 2;
+        }
     }
 
     if (Entities.bugling.health <= 0) {
-        enemyWarning.innerHTML = "Bugling defeated!";
+        enemyHealthHTML.innerHTML = '';
+
+        enemyWarning.innerHTML = "Bugman defeated!";
     }
 }
 
@@ -124,19 +137,21 @@ function CreateBattleUI(floor){
 
         const playerContainer = document.createElement("div");
         const playerImg = document.createElement("img");
-        const playerHealth = document.createElement("h2");
-        const playerGuard =  document.createElement("h2");
-        const cardPlaysLeft = document.createElement("h2");
+        const playerHealth = document.createElement("h3");
+        const playerGuard =  document.createElement("h3");
+        const cardPlaysLeft = document.createElement("h3");
         const endTurnBtn = document.createElement("button");
 
         const deckContainer = document.createElement("div");
         const playerHand = document.createElement("div");
+        const handAndInfoContainer = document.createElement("div");
 
         const numCollumn = document.createElement("div");
         const row1 = document.createElement("div");
         const row2 = document.createElement("div");
         const row3 = document.createElement("div");
-        const row4 = document.createElement("div");
+        const padding = document.createElement("div");
+
 
 
 
@@ -144,7 +159,9 @@ function CreateBattleUI(floor){
         enemyContainer.setAttribute("class", "col-12 enemyContainer");
         enemyHealth.setAttribute("id", "eHP")
         damageWarning.setAttribute("id", "eW")
-        enemyImg.setAttribute("src", "assetsPH/enemy.png")
+        enemyHealth.setAttribute("class", "eText")
+        damageWarning.setAttribute("class", "eText")
+        enemyImg.setAttribute("src", "assetsPH/realbugmam.png")
         enemyImg.setAttribute("class", "enemyImg")
         numCollumn.setAttribute("class", "col-2")
         playerContainer.setAttribute("class", "col-12 playerContainer")
@@ -156,20 +173,22 @@ function CreateBattleUI(floor){
         playerGuard.setAttribute("id", "pGuard")
         playerHand.setAttribute("class", "col-10")
         playerHand.setAttribute("id", "playerHand")
+        handAndInfoContainer.setAttribute("class", "handAndInfoContainer col-12")
 
         row1.setAttribute("class", "row");
         row2.setAttribute("class", "row");
         row3.setAttribute("class", "row");
-        row4.setAttribute("class", "row");
+        padding.setAttribute("class", "col-4")
+
 
 
 
         floorNum.textContent = floor;
-        enemyHealth.textContent = Entities.bugling.health;
-        damageWarning.textContent = Entities.bugling.damage;
-        playerHealth.textContent = Entities.player.health;
-        playerGuard.textContent = Entities.player.guard;
-        cardPlaysLeft.textContent = Entities.player.cardPlay;
+        enemyHealth.textContent = "hp: " + Entities.bugling.health;
+        damageWarning.textContent = "dw: " + Entities.bugling.damage;
+        playerHealth.textContent = "hp: " + Entities.player.health;
+        playerGuard.textContent = "guard: " + Entities.player.guard;
+        cardPlaysLeft.textContent = "energy: " + Entities.player.cardPlay;
         endTurnBtn.textContent = "End Turn"
 
 
@@ -181,21 +200,19 @@ function CreateBattleUI(floor){
         enemyContainer.appendChild(enemyImg)
         numCollumn.appendChild(enemyHealth)
         numCollumn.appendChild(damageWarning)
+        row2.appendChild(padding)
         row2.appendChild(numCollumn)
         row2.appendChild(enemyContainer)
         gameScreen.appendChild(row2)
-
-        playerContainer.appendChild(playerImg)
-        row3.appendChild(playerContainer);
-        gameScreen.appendChild(row3)
 
         deckContainer.appendChild(playerHealth);
         deckContainer.appendChild(cardPlaysLeft);
         deckContainer.appendChild(playerGuard);
         deckContainer.appendChild(endTurnBtn);
-        row4.appendChild(deckContainer);
-        row4.appendChild(playerHand)
-        gameScreen.appendChild(row4)
+        handAndInfoContainer.appendChild(deckContainer);
+        handAndInfoContainer.appendChild(playerHand)
+        row3.appendChild(handAndInfoContainer);
+        gameScreen.appendChild(row3);
 
 
     }
@@ -210,18 +227,28 @@ function resizeGame() {
     gameScreen.style.width = `${gameWidth}px`;
     gameScreen.style.height = `${gameHeight}px`;
 
-    // Resize enemy and player images
-    const enemyImg = document.querySelector(".enemyImg");
-    const playerImg = document.querySelector(".playerContainer img");
 
-    enemyImg.style.height = `${gameHeight * 0.3}px`;
-    playerImg.style.height = `${gameHeight * 0.2}px`;
+    const enemyImg = document.querySelector(".enemyImg");
+
+    enemyImg.style.height = `${gameHeight * 0.50}px`;
+
 
     // Resize cards in the player's hand
     const cards = document.querySelectorAll(".deckCard");
+    const cardWidth = Math.min(gameWidth * 0.15, 160);  // Limit card width to a max of 160px
+    const cardHeight = Math.min(gameHeight * 0.2, 250); // Limit height to a max of 250px
+
     cards.forEach(card => {
-        card.style.width = `${gameWidth * 0.15}px`;
-        card.style.height = `${gameHeight * 0.15}px`;
+        card.style.width = `${cardWidth}px`;
+        card.style.height = `${cardHeight}px`;
+    });
+}
+
+function setCardSize() {
+    const cards = document.querySelectorAll('.deckCard');
+    cards.forEach(card => {
+        card.style.width = '200px';  // Reset width
+        card.style.height = '250px'; // Reset height
     });
 }
 
@@ -276,14 +303,14 @@ function CardHandler(i) {
     if (Deck.hand[i]) {
         if (Deck.hand[i].type === 'damage') {
             Entities.bugling.health -= Deck.hand[i].value;
-            enemyHealthHTML.innerHTML = Entities.bugling.health;
+            enemyHealthHTML.innerHTML = "hp: " + Entities.bugling.health;
         } else if (Deck.hand[i].type === 'defense') {
             Entities.player.guard += Deck.hand[i].value;
-            playerGuardHTML.innerHTML = Entities.player.guard;
+            playerGuardHTML.innerHTML = "guard: " + Entities.player.guard;
         }
 
         Entities.player.cardPlay -= Deck.hand[i].cost; // Reduce card play count
-        cardPlayHTML.innerHTML = Entities.player.cardPlay;
+        cardPlayHTML.innerHTML = "energy: " + Entities.player.cardPlay;
 
         // Move the used card to the discard pile and remove it from hand
         Deck.discard.push(Deck.hand[i]);
