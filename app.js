@@ -83,13 +83,12 @@ async function fight1() {
             playerHealthHTML.innerHTML = "hp: " + Entities.player.health;
         }
 
-        // Reset player guard and update UI
         Entities.player.guard = 0;
         playerGuardHTML.innerHTML = "guard: " + Entities.player.guard;
 
         if (Entities.player.health <= 0) {
-            showDeathScreen();  // Show the "You Died" screen
-            break;  // Stop the fight
+            showDeathScreen();
+            break;  // Stop the fight, you died
         }
 
         let damageModifier = Math.floor(Math.random() * 3);
@@ -133,11 +132,7 @@ function resetCardListeners() {
     // Select all current cards in the player's hand
     const playerCards = Array.from(document.querySelectorAll('#playerHand .deckCard'));
 
-    // Clear previous event listeners and add new ones
     playerCards.forEach((card, index) => {
-        // Clear previous listeners
-        card.removeEventListener("click", () => {}); // This won't work since we didn't save the function reference.
-
         // Add a new event listener
         card.addEventListener("click", () => {
             if (Deck.hand[index] && Deck.hand[index].cost <= Entities.player.cardPlay) {
@@ -153,7 +148,7 @@ function resetCardListeners() {
 function CreateBattleUI(floor){
 
     if (floor === 1){
-        
+        // Create elements
         const gameScreen = document.getElementById("game")
 
         const levelHeader = document.createElement("div");
@@ -183,7 +178,7 @@ function CreateBattleUI(floor){
 
 
 
-
+        // Set class, id, and src
         levelHeader.setAttribute("class", "col-12 floorBanner");
         enemyContainer.setAttribute("class", "col-12 enemyContainer");
         enemyHealth.setAttribute("id", "eHP")
@@ -211,7 +206,7 @@ function CreateBattleUI(floor){
 
 
 
-
+        // Edit text content
         floorNum.textContent = floor;
         enemyHealth.textContent = "hp: " + Entities.bugling.health;
         damageWarning.textContent = "dw: " + Entities.bugling.damage;
@@ -221,7 +216,7 @@ function CreateBattleUI(floor){
         endTurnBtn.textContent = "End Turn"
 
 
-
+        // Place items on page
         levelHeader.appendChild(floorNum)
         row1.appendChild(levelHeader)
         gameScreen.appendChild(row1)
@@ -310,14 +305,14 @@ function DisplayCards() {
 
         // Create a new card element
         const cardElement = document.createElement("div");
-        cardElement.className = 'deckCard';  // Assuming you have a 'deckCard' class for styling
+        cardElement.className = 'deckCard';
 
         // Create the card name
         const nameElement = document.createElement("div");
         nameElement.className = 'card-name';
         nameElement.innerHTML = card.name.charAt(0).toUpperCase() + card.name.slice(1);  // Capitalized card name
 
-        // Create the card cost and asset image
+        // Create and add type image to card
         const costElement = document.createElement("div");
         costElement.className = 'card-cost';
         costElement.innerHTML = `Cost: ${card.cost}`;
@@ -326,31 +321,27 @@ function DisplayCards() {
         const effectElement = document.createElement("div");
         effectElement.className = 'card-effect';
         
-        // Add the asset image
+        // Add the type image
         const imgElement = document.createElement("img");
         imgElement.src = card.asset;
-        imgElement.alt = `${card.type} icon`;  // Alt text for accessibility
-        imgElement.style.width = '30px';      // Small icon size
-        imgElement.style.height = '30px';     // Set width and height to fit the card
-        imgElement.style.marginLeft = '10px'; // Spacing between text and image
+        imgElement.alt = `${card.type} icon`;  
+        imgElement.style.width = '30px';  
+        imgElement.style.height = '30px';   
+        imgElement.style.marginLeft = '10px';
 
         // Combine the value and effect with the image
         effectElement.innerHTML = `Effect: ${card.value}`;
-        effectElement.appendChild(imgElement); // Append the image next to the value text
+        effectElement.appendChild(imgElement); 
 
         // Append name, cost, and effect elements to the card element
-        cardElement.appendChild(nameElement);  // Name at the top center
+        cardElement.appendChild(nameElement); 
         cardElement.appendChild(costElement);
-        cardElement.appendChild(effectElement);  // Effect and image together
+        cardElement.appendChild(effectElement); 
 
         // Append the card element to the hand container
         handContainer.appendChild(cardElement);
     }
 }
-
-
-
-
 
 function CardHandler(i) {
     const enemyHealthHTML = document.getElementById("eHP");
@@ -367,10 +358,10 @@ function CardHandler(i) {
         } else if (Deck.hand[i].type === 'poison') {
             Entities.bugling.poison += Deck.hand[i].value;
         } else if (Deck.hand[i].type === 'energy') {
-            Entities.player.nextTurnExtraCardPlay = true; // Enable extra card play for the next turn
+            Entities.player.nextTurnExtraCardPlay = true; 
         } 
 
-        Entities.player.cardPlay -= Deck.hand[i].cost; // Reduce card play count
+        Entities.player.cardPlay -= Deck.hand[i].cost; 
         cardPlayHTML.innerHTML = "energy: " + Entities.player.cardPlay;
 
         // Move the used card to the discard pile and remove it from hand
@@ -391,14 +382,14 @@ function refillHand() {
 
     // First, fill from deck
     while (Deck.hand.length < 5 && Deck.cards.length > 0) {
-        const card = Deck.cards.shift(); // Take the top card from the deck
-        Deck.hand.push(card); // Add it to the hand
+        const card = Deck.cards.shift(); 
+        Deck.hand.push(card); 
     }
 
     // If we still have space, fill from discard
     while (Deck.hand.length < 5 && Deck.discard.length > 0) {
-        const card = Deck.discard.shift(); // Take the top card from the discard pile
-        Deck.hand.push(card); // Add it to the hand
+        const card = Deck.discard.shift(); 
+        Deck.hand.push(card); 
     }
 
     DisplayCards();
@@ -413,29 +404,21 @@ function MoveToHand(i){
         
 }
 
-// Reset health and state when needed
-function resetGame() {
-    Entities.player.health = 30;
-    Entities.bugling.health = 25;
-    Entities.player.cardPlay = 3;
-
-}
 
 function showDeathScreen() {
-    // Create the death screen container
+
     const deathScreen = document.createElement('div');
     deathScreen.classList.add('youDiedScreen');
     
-    // Add the "You Died" text
     const deathText = document.createElement('h1');
     deathText.innerText = "You Died...";
     deathScreen.appendChild(deathText);
     
-    // Append the death screen to the body
+
     document.body.appendChild(deathScreen);
     
     // Wait for the fade animation before showing the text
     setTimeout(() => {
       deathScreen.classList.add('showText');
-    }, 3000); // Delay for 3 seconds to match the fade animation time
+    }, 3000);
 }
