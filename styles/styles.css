@@ -12,7 +12,7 @@ html, body {
     background-size: cover; /* Adjusts the image to cover the whole background */
     background-repeat: no-repeat; /* Prevents the image from repeating */
     background-position: center; /* Centers the image in the background */
-    color: #cc69f3 !important;
+    color: #171219 !important;
 }
 
 
@@ -91,6 +91,23 @@ html, body {
     overflow: hidden; /* Prevent overflow of text */
 }
 
+.card-cost {
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.card-value {
+    margin-top: 10px;
+}
+
+.card-name {
+    font-weight: bold;
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
 .deckCard p {
     margin: 0;
     line-height: 1.2em; /* Adjust line height for better text fitting */
@@ -126,7 +143,6 @@ html, body {
     align-items: center;
     color: red;
     font-size: 80px;
-    font-family: 'Arial', sans-serif;
     opacity: 0;
     background-color: black;
     z-index: 9999; /* Ensure it's on top of everything */

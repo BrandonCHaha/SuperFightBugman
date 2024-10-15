@@ -1,11 +1,15 @@
 class Deck{
     static cards =[
-        {cost: 0, type: 'damage', value: 2, name: 'Quick Strike', cardNum: 1}, 
-        {cost: 1, type: 'damage', value: 6, name: 'Flame- thrower', cardNum: 2}, 
-        {cost: 1, type: 'damage', value: 6, name: 'Flame- thrower', cardNum: 3}, 
-        {cost: 1, type: 'defense', value: 4, name: 'Defenses up!', cardNum: 4}, 
-        {cost: 1, type: 'defense', value: 4, name: 'Defenses up!', cardNum: 5}, 
-        {cost: 2, type: 'defense', value: 10, name: 'Daring Escape', cardNum: 6}
+        {cost: 0, type: 'attack', value: 2, name: 'Quick Strike', cardNum: 1, asset: 'assetsPH/attack.png'}, 
+        {cost: 1, type: 'attack', value: 6, name: 'Flame- thrower', cardNum: 2, asset: 'assetsPH/attack.png'}, 
+        {cost: 1, type: 'attack', value: 6, name: 'Flame- thrower', cardNum: 3, asset: 'assetsPH/attack.png'}, 
+        {cost: 1, type: 'defense', value: 6, name: 'Defenses up!', cardNum: 4, asset: 'assetsPH/defense.png'}, 
+        {cost: 1, type: 'defense', value: 6, name: 'Defenses up!', cardNum: 5, asset: 'assetsPH/defense.png'},
+        {cost: 0, type: 'defense', value: 4, name: 'Dodge Roll', cardNum: 6, asset: 'assetsPH/defense.png'}, 
+        {cost: 2, type: 'defense', value: 14, name: 'Daring Escape', cardNum: 7, asset: 'assetsPH/defense.png'},
+        {cost: 1, type: 'poison', value: 4, name: 'Toxic Splash', cardNum: 8, asset: 'assetsPH/poison.png'},
+        {cost: 2, type: 'poison', value: 8, name: 'Acid Bath', cardNum: 9, asset: 'assetsPH/poison.png'},
+        {cost: 1, type: 'energy', value: 1, name: 'Deep Breath', cardNum: 10, asset: 'assetsPH/energy.png'},
     ];
 
     static discard = [];
@@ -13,8 +17,8 @@ class Deck{
 }
 
 class Entities{
-    static player = {health: 30, cardPlay: 3, guard: 0}
-    static bugling = {health: 50, damage: 4, guard: 0}
+    static player = {health: 40, cardPlay: 3, guard: 0, poison: 0, nextTurnExtraCardPlayxtraCardPlay: false}
+    static bugling = {health: 150, damage: 4, guard: 0, poison: 0}
 }
 
 
@@ -39,21 +43,40 @@ async function fight1() {
     while (Entities.bugling.health > 0 && Entities.player.health > 0) {
         await PlayerTurn();
 
-        Entities.player.cardPlay = 3;
-        cardPlayHTML.innerHTML = "energy: " + Entities.player.cardPlay;
-        
-        if (Entities.bugling.health > 0) {
+        if (Entities.player.nextTurnExtraCardPlay) {
+            Entities.player.cardPlay = 4; // Apply extra card play for this turn
+            Entities.player.nextTurnExtraCardPlay = false; // Reset for the following turn
+        } else {
+            Entities.player.cardPlay = 3; // Reset to 3 card plays after the extra turn
+        }
+
+        if (Entities.bugling.poison > 0) {
+            const poisonDamage = Entities.bugling.poison;
+            Entities.bugling.health -= poisonDamage;
+            enemyHealthHTML.innerHTML = "hp: " + Entities.bugling.health;
 
             enemyWarning.style.fontSize = '30px';
 
+            enemyWarning.innerHTML = `Bugman takes ${poisonDamage} poison damage!`;
+            await new Promise(resolve => setTimeout(resolve, 1000));
+
+            enemyWarning.style.fontSize = '60px';
+            enemyWarning.innerHTML = "dw: " + (Entities.bugling.damage + 1);
+
+            // Decrease poison for the next turn
+            Entities.bugling.poison = Math.max(Entities.bugling.poison - 1, 0);
+        }
+
+        cardPlayHTML.innerHTML = "energy: " + Entities.player.cardPlay;
+
+        if (Entities.bugling.health > 0) {
+            enemyWarning.style.fontSize = '30px';
             enemyWarning.innerHTML = `Bugman attacks for ${Entities.bugling.damage} damage!`;
 
             await new Promise(resolve => setTimeout(resolve, 1000));
 
             enemyWarning.style.fontSize = '60px';
-
             enemyWarning.innerHTML = "dw: " + (Entities.bugling.damage + 1);
-
 
             const damageToTake = Math.max(Entities.bugling.damage - Entities.player.guard, 0);
             Entities.player.health -= damageToTake;
@@ -69,18 +92,18 @@ async function fight1() {
             break;  // Stop the fight
         }
 
-        let damageModifier = Math.floor(Math.random() * 2);
-        console.log(damageModifier)
+        let damageModifier = Math.floor(Math.random() * 3);
         if (damageModifier == 0){
-            Entities.bugling.damage += 1;
-        } else {
             Entities.bugling.damage += 2;
+        } else if (damageModifier == 1){
+            Entities.bugling.damage += 3;
+        } else {
+            Entities.bugling.damage += 4;
         }
     }
 
     if (Entities.bugling.health <= 0) {
         enemyHealthHTML.innerHTML = '';
-
         enemyWarning.innerHTML = "Bugman defeated!";
     }
 }
@@ -258,8 +281,18 @@ function setCardSize() {
     });
 }
 
+//Fisher-Yates shuffle algorithm
+function shuffleDeck() {
+    for (let i = Deck.cards.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [Deck.cards[i], Deck.cards[j]] = [Deck.cards[j], Deck.cards[i]];
+    }
+}
+
 function DrawInitialHand() {
     Deck.hand = [];
+
+    shuffleDeck();
 
     // Draw 5 cards into the hand
     for (let i = 0; i < 5; i++) {
@@ -269,36 +302,54 @@ function DrawInitialHand() {
 
 //Creates cards, takes info from Deck class, and puts it onto the cards
 function DisplayCards() {
-    const playerHandDiv = document.getElementById('playerHand');
-    playerHandDiv.innerHTML = ''; // Clear previous cards
+    const handContainer = document.getElementById("playerHand");
+    handContainer.innerHTML = '';  // Clear the hand
 
-    // Loop through the current hand and display each card
-    Deck.hand.forEach((cardData, index) => {
-        const card = document.createElement("div");
-        const value = document.createElement("h4");
-        const cost = document.createElement("h4");
-        const cardName = document.createElement("h5");
+    for (let i = 0; i < Deck.hand.length; i++) {
+        const card = Deck.hand[i];
 
-        card.setAttribute("class", "col-2 deckCard");
-        card.setAttribute("id", `card${index}`); // Update card ID dynamically
+        // Create a new card element
+        const cardElement = document.createElement("div");
+        cardElement.className = 'deckCard';  // Assuming you have a 'deckCard' class for styling
 
-        value.setAttribute("class", "value");
-        cost.setAttribute("class", "cost");
+        // Create the card name
+        const nameElement = document.createElement("div");
+        nameElement.className = 'card-name';
+        nameElement.innerHTML = card.name.charAt(0).toUpperCase() + card.name.slice(1);  // Capitalized card name
 
-        // Set the content of the card
-        value.textContent = cardData.value;
-        cost.textContent = cardData.cost;
-        cardName.textContent = cardData.name;
+        // Create the card cost and asset image
+        const costElement = document.createElement("div");
+        costElement.className = 'card-cost';
+        costElement.innerHTML = `Cost: ${card.cost}`;
+        
+        // Create the value and effect section with the asset image
+        const effectElement = document.createElement("div");
+        effectElement.className = 'card-effect';
+        
+        // Add the asset image
+        const imgElement = document.createElement("img");
+        imgElement.src = card.asset;
+        imgElement.alt = `${card.type} icon`;  // Alt text for accessibility
+        imgElement.style.width = '30px';      // Small icon size
+        imgElement.style.height = '30px';     // Set width and height to fit the card
+        imgElement.style.marginLeft = '10px'; // Spacing between text and image
 
-        // Append the card details to the card element
-        card.appendChild(cost);
-        card.appendChild(cardName);
-        card.appendChild(value);
+        // Combine the value and effect with the image
+        effectElement.innerHTML = `Effect: ${card.value}`;
+        effectElement.appendChild(imgElement); // Append the image next to the value text
 
-        // Append the card to the player's hand
-        playerHandDiv.appendChild(card);
-    });
+        // Append name, cost, and effect elements to the card element
+        cardElement.appendChild(nameElement);  // Name at the top center
+        cardElement.appendChild(costElement);
+        cardElement.appendChild(effectElement);  // Effect and image together
+
+        // Append the card element to the hand container
+        handContainer.appendChild(cardElement);
+    }
 }
+
+
+
 
 
 function CardHandler(i) {
@@ -307,13 +358,17 @@ function CardHandler(i) {
     const playerGuardHTML = document.getElementById("pGuard");
 
     if (Deck.hand[i]) {
-        if (Deck.hand[i].type === 'damage') {
+        if (Deck.hand[i].type === 'attack') {
             Entities.bugling.health -= Deck.hand[i].value;
             enemyHealthHTML.innerHTML = "hp: " + Entities.bugling.health;
         } else if (Deck.hand[i].type === 'defense') {
             Entities.player.guard += Deck.hand[i].value;
             playerGuardHTML.innerHTML = "guard: " + Entities.player.guard;
-        }
+        } else if (Deck.hand[i].type === 'poison') {
+            Entities.bugling.poison += Deck.hand[i].value;
+        } else if (Deck.hand[i].type === 'energy') {
+            Entities.player.nextTurnExtraCardPlay = true; // Enable extra card play for the next turn
+        } 
 
         Entities.player.cardPlay -= Deck.hand[i].cost; // Reduce card play count
         cardPlayHTML.innerHTML = "energy: " + Entities.player.cardPlay;
