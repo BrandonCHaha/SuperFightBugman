@@ -8,14 +8,16 @@ html, body {
     font-weight: 400;
     font-style: bold;
     font-size: 30px;
-    background-image: url('https://i.ibb.co/3WwkbRk/Background.png') !important; /* Replace with your image path */
-    background-size: cover; /* Adjusts the image to cover the whole background */
-    background-repeat: no-repeat; /* Prevents the image from repeating */
-    background-position: center; /* Centers the image in the background */
+    background-image: url('https://i.ibb.co/58hmhfH/New-Project.png') !important;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
     color: #171219 !important;
 }
 
-
+.turnNumber {
+    color: #F1D2A7;
+}
 
 .floorBanner {
     text-align: center;
@@ -29,8 +31,8 @@ html, body {
 
 .enemyImg {
     float: left;
-    width: 100%;  /* Ensure image takes up full width */
-    object-fit: contain; /* Maintain aspect ratio */
+    width: 100%;
+    object-fit: contain;
 }
 
 .playerContainer {
@@ -39,23 +41,30 @@ html, body {
 }
 
 .playerContainer img {
-    width: 100%;  /* Set width instead of height for flexibility */
+    width: 100%;
     object-fit: contain;
 }
 
 .deckContainer {
     border: 10px solid #4c3f43;
     border-radius: 5%;
-    width: auto; /* Let it fit its content */
+    width: auto;
     display: flex;
     flex-direction: column;
     align-items: center;
     background-color: #f1d2a7;
-    margin-right: 20px; /* Add space between deck and player hand */
+    margin-right: 20px;
+}
+
+.coolIcon {
+    width: 55px;
+    height: 55px;
+    margin-right: 5px;
+    margin-right: 10px;
 }
 
 #playerHand {
-    background-color: #f1d2a7; /* Visible background for debugging */
+    background-color: #f1d2a7;
     padding: 20px;
     display: flex;
     justify-content: space-around;
@@ -64,31 +73,31 @@ html, body {
     border: solid 10px #4c3f43;
     border-radius: 15px;
     height: auto;
-    flex-grow: 1; /* Allow it to grow to fill the remaining space */
+    flex-grow: 1;
 }
 
 #endBtn {
-    margin-top: 15px;  /* Add some space to make it visible */
+    margin-top: 15px;
     padding: 10px 20px;
     border: 5px solid #4c3f43;
     border-radius: 5%;
-    font-size: 30px; /* Adjust button size */
+    font-size: 30px;
     background-color: #6F9283;
 }
 
 .deckCard {
     padding: 15px;
-    background-color: #f7e1bf; /* Background color for visibility */
+    background-color: #f7e1bf;
     border: solid 5px #4c3f43;
     border-radius: 5%;
-    font-size: 20px; /* Use fixed font size */
-    width: 200px; /* Fixed width */
-    height: 250px; /* Fixed height */
+    font-size: 20px;
+    width: 200px;
+    height: 250px;
     display: inline-block;
     margin: 10px;
     text-align: center;
-    box-sizing: border-box; /* Include padding in width/height */
-    overflow: hidden; /* Prevent overflow of text */
+    box-sizing: border-box;
+    overflow: hidden;
 }
 
 .card-cost {
@@ -110,15 +119,15 @@ html, body {
 
 .deckCard p {
     margin: 0;
-    line-height: 1.2em; /* Adjust line height for better text fitting */
-    white-space: nowrap; /* Prevent text from wrapping */
+    line-height: 1.2em;
+    white-space: nowrap;
     overflow: hidden;
-    text-overflow: ellipsis; /* Cut off long text with "..." */
+    text-overflow: ellipsis;
 }
 
 .handAndInfoContainer {
-    display: flex;  /* Enable flexbox */
-    justify-content: space-between; /* Space between child elements */
+    display: flex;
+    justify-content: space-between;
     padding-top: 0px;
 }
 

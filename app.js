@@ -17,7 +17,7 @@ class Deck{
 }
 
 class Entities{
-    static player = {health: 40, cardPlay: 3, guard: 0, poison: 0, nextTurnExtraCardPlayxtraCardPlay: false}
+    static player = {health: 40, cardPlay: 3, guard: 0, poison: 0, nextTurnExtraCardPlayxtraCardPlay: false, turn: 1}
     static bugling = {health: 150, damage: 4, guard: 0, poison: 0}
 }
 
@@ -39,6 +39,8 @@ async function fight1() {
     const playerHealthHTML = document.getElementById("pHP");
     const cardPlayHTML = document.getElementById("energyLeft");
     const playerGuardHTML = document.getElementById("pGuard");
+    const playerTurn = document.getElementById("turnNumber");
+    
 
     while (Entities.bugling.health > 0 && Entities.player.health > 0) {
         await PlayerTurn();
@@ -53,7 +55,7 @@ async function fight1() {
         if (Entities.bugling.poison > 0) {
             const poisonDamage = Entities.bugling.poison;
             Entities.bugling.health -= poisonDamage;
-            enemyHealthHTML.innerHTML = "hp: " + Entities.bugling.health;
+            enemyHealthHTML.innerHTML = `<img src='assetsPH/bHeart.png' class='coolIcon' alt='HP'>: ${Entities.bugling.health}`;
 
             enemyWarning.style.fontSize = '30px';
 
@@ -61,13 +63,13 @@ async function fight1() {
             await new Promise(resolve => setTimeout(resolve, 1000));
 
             enemyWarning.style.fontSize = '60px';
-            enemyWarning.innerHTML = "dw: " + (Entities.bugling.damage + 1);
+            enemyWarning.innerHTML = `<img src='assetsPH/attack.png' class='coolIcon' alt='HP'>: ${Entities.bugling.damage + 1}`;
 
             // Decrease poison for the next turn
             Entities.bugling.poison = Math.max(Entities.bugling.poison - 1, 0);
         }
 
-        cardPlayHTML.innerHTML = "energy: " + Entities.player.cardPlay;
+        cardPlayHTML.innerHTML = `<img src='assetsPH/energy.png' class='coolIcon' alt='HP'>: ${Entities.player.cardPlay}`;
 
         if (Entities.bugling.health > 0) {
             enemyWarning.style.fontSize = '30px';
@@ -76,15 +78,14 @@ async function fight1() {
             await new Promise(resolve => setTimeout(resolve, 1000));
 
             enemyWarning.style.fontSize = '60px';
-            enemyWarning.innerHTML = "dw: " + (Entities.bugling.damage + 1);
+            enemyWarning.innerHTML = `<img src='assetsPH/attack.png' class='coolIcon' alt='Attack'>: ` + (Entities.bugling.damage + 1);
 
             const damageToTake = Math.max(Entities.bugling.damage - Entities.player.guard, 0);
-            Entities.player.health -= damageToTake;
-            playerHealthHTML.innerHTML = "hp: " + Entities.player.health;
+            playerHealthHTML.innerHTML = `<img src='assetsPH/pHeart.png' class='coolIcon' alt='HP'>` + ": " + (Entities.player.health - damageToTake);
         }
 
         Entities.player.guard = 0;
-        playerGuardHTML.innerHTML = "guard: " + Entities.player.guard;
+        playerGuardHTML.innerHTML = `<img src='assetsPH/defense.png' class='coolIcon' alt='HP'>: ${Entities.player.guard}`;
 
         if (Entities.player.health <= 0) {
             showDeathScreen();
@@ -99,12 +100,18 @@ async function fight1() {
         } else {
             Entities.bugling.damage += 4;
         }
+
+        Entities.player.turn++;
+        playerTurn.innerHTML = `T U R N: ${Entities.player.turn}`
+
     }
 
     if (Entities.bugling.health <= 0) {
         enemyHealthHTML.innerHTML = '';
         enemyWarning.innerHTML = "Bugman defeated!";
     }
+
+
 }
 
 
@@ -180,6 +187,8 @@ function CreateBattleUI(floor){
 
         // Set class, id, and src
         levelHeader.setAttribute("class", "col-12 floorBanner");
+        floorNum.setAttribute("id", "turnNumber");
+        floorNum.setAttribute("class", "turnNumber");
         enemyContainer.setAttribute("class", "col-12 enemyContainer");
         enemyHealth.setAttribute("id", "eHP")
         damageWarning.setAttribute("id", "eW")
@@ -207,12 +216,12 @@ function CreateBattleUI(floor){
 
 
         // Edit text content
-        floorNum.textContent = floor;
-        enemyHealth.textContent = "hp: " + Entities.bugling.health;
-        damageWarning.textContent = "dw: " + Entities.bugling.damage;
-        playerHealth.textContent = "hp: " + Entities.player.health;
-        playerGuard.textContent = "guard: " + Entities.player.guard;
-        cardPlaysLeft.textContent = "energy: " + Entities.player.cardPlay;
+        floorNum.textContent = `T U R N: ${Entities.player.turn}`;
+        enemyHealth.innerHTML = `<img src='assetsPH/bHeart.png' class='coolIcon' alt='eHP'>: ${Entities.bugling.health}`;
+        damageWarning.innerHTML = `<img src='assetsPH/attack.png' class='coolIcon' alt='attack'>: ${Entities.bugling.damage}`;
+        playerHealth.innerHTML = `<img src='assetsPH/pHeart.png' class='coolIcon' alt='HP'>: ${Entities.player.health}`;
+        playerGuard.innerHTML = `<img src='assetsPH/defense.png' class='coolIcon' alt='Defense';'>: ${Entities.player.guard}`;
+        cardPlaysLeft.innerHTML = `<img src='assetsPH/energy.png' class='coolIcon' alt='Energy';'>: ${Entities.player.cardPlay}`;
         endTurnBtn.textContent = "End Turn"
 
 
@@ -351,10 +360,10 @@ function CardHandler(i) {
     if (Deck.hand[i]) {
         if (Deck.hand[i].type === 'attack') {
             Entities.bugling.health -= Deck.hand[i].value;
-            enemyHealthHTML.innerHTML = "hp: " + Entities.bugling.health;
+            enemyHealthHTML.innerHTML = `<img src='assetsPH/bHeart.png' class='coolIcon' alt='eHP'>: ${Entities.bugling.health}`;
         } else if (Deck.hand[i].type === 'defense') {
             Entities.player.guard += Deck.hand[i].value;
-            playerGuardHTML.innerHTML = "guard: " + Entities.player.guard;
+            playerGuardHTML.innerHTML = `<img src='assetsPH/defense.png' class='coolIcon' alt='defense'>: ${Entities.player.guard}`;
         } else if (Deck.hand[i].type === 'poison') {
             Entities.bugling.poison += Deck.hand[i].value;
         } else if (Deck.hand[i].type === 'energy') {
@@ -362,7 +371,7 @@ function CardHandler(i) {
         } 
 
         Entities.player.cardPlay -= Deck.hand[i].cost; 
-        cardPlayHTML.innerHTML = "energy: " + Entities.player.cardPlay;
+        cardPlayHTML.innerHTML = `<img src='assetsPH/energy.png' class='coolIcon' alt='Energy'>: ${Entities.player.cardPlay}`;
 
         // Move the used card to the discard pile and remove it from hand
         Deck.discard.push(Deck.hand[i]);
