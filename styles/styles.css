@@ -122,7 +122,6 @@ html, body {
     padding-top: 0px;
 }
 
-/* CSS */
 @keyframes fadeToBlack {
     0% {
       background-color: transparent;
@@ -132,29 +131,5 @@ html, body {
     }
 }
   
-.youDiedScreen {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: red;
-    font-size: 80px;
-    opacity: 0;
-    background-color: black;
-    z-index: 9999; /* Ensure it's on top of everything */
-}
-  
-.fadeIn {
-    animation: fadeToBlack 3s forwards; /* Fades background to black over 3 seconds */
-}
-  
-.showText {
-    opacity: 1;
-    transition: opacity 1s ease-in; /* Fade in the text */
-}
-  
-  
+
+
